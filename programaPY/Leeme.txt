@@ -1,0 +1,52 @@
+================================================================================
+                GUÍA Y MANUAL DE USO: PROCESADOR DE TOMOS
+================================================================================
+
+Este sistema organiza, limpia y renombra automáticamente todas las imágenes de
+cada tomo en formato "Folio X.jpg" o "Folio X_1.jpg", gestionando duplicados,
+folios faltantes y generando informes y muestras de control visual.
+
+--------------------------------------------------------------------------------
+🛠️ ESTRUCTURA Y ARCHIVOS TXT (ÚNICAMENTE 2 ARCHIVOS TXT POR TOMO)
+--------------------------------------------------------------------------------
+
+1. _configuracion.txt  (Archivo de entrada / BD del usuario):
+   Donde defines las opciones del tomo. Ejemplo limpio y minimalista:
+
+   FOLIOS_FALTANTES = 15, 128-135, 200
+   FOLIO_INICIAL = 1
+   TAMANO_MUESTRA = 10
+   MODO_NUMERACION = SUBFOLIOS
+
+2. _folios faltantes.txt  (Archivo de salida / Reporte generado automáticamente):
+   Informe conciso con el resumen del procesamiento (totales, rango asignado,
+   folios omitidos, duplicados movidos y anomalías del escáner).
+
+--------------------------------------------------------------------------------
+⚙️ OPCIONES DISPONIBLES EN _configuracion.txt
+--------------------------------------------------------------------------------
+
+- FOLIOS_FALTANTES : Folios a saltar (ej: 15, 128-135, 200). Poner 0 o dejar vacío si no hay.
+                     El script auto-añade aquí los saltos que encuentre en el escáner (en 1ª ejecución con BD vacía).
+- FOLIO_INICIAL    : Folio entero inicial del tomo (por defecto: 1).
+- TAMANO_MUESTRA   : Frecuencia de fotos para la carpeta 'test/' (por defecto: 10).
+- MODO_NUMERACION  : SIMPLE (Folio 1, Folio 2) o SUBFOLIOS (Folio 1_1, Folio 1_2).
+
+--------------------------------------------------------------------------------
+🚀 PASO A PASO DEL FLUJO COMPLETO
+--------------------------------------------------------------------------------
+
+1. Desplegar infraestructura desde la raíz:
+       ./_preparar_tomos.py  (o python3 _preparar_tomos.py)
+
+2. Ajustar _configuracion.txt en cada tomo (si requiere saltos o cambio de modo).
+
+3. Procesar cada tomo (ejecutar dentro de la carpeta del tomo):
+       ./_renombrar_folios.py  (o python3 _renombrar_folios.py)
+
+4. Validar resultados con '_folios faltantes.txt' y la carpeta 'test/'.
+
+5. Limpieza final para entrega (desde la raíz):
+       ./_limpiar_tomos.py  (o python3 _limpiar_tomos.py)
+
+================================================================================

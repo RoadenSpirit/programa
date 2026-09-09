@@ -1,0 +1,44 @@
+name: Compilar Ejecutables de Windows
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch: # Permite compilar manualmente desde la web de GitHub
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Descargar Código
+      uses: actions/checkout@v4
+
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11' # Versión estable para PyInstaller en Windows
+
+    - name: Instalar Dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+
+    - name: Compilar Ejecutables con PyInstaller
+      shell: pwsh
+      run: |
+        # Crear directorio de salida
+        New-Item -ItemType Directory -Path dist_windows -Force
+        
+        # Compilar los tres scripts
+        pyinstaller --onefile --console --clean --noconfirm --distpath dist_windows --name _preparar_tomos programaPY/_preparar_tomos.py
+        pyinstaller --onefile --console --clean --noconfirm --distpath dist_windows --name _renombrar_folios programaPY/_renombrar_folios.py
+        pyinstaller --onefile --console --clean --noconfirm --distpath dist_windows --name _limpiar_tomos programaPY/_limpiar_tomos.py
+
+    - name: Guardar Ejecutables como Artefactos
+      uses: actions/upload-artifact@v4
+      with:
+        name: ProcesadorTomos-Windows-Executables
+        path: dist_windows/*.exe
+        retention-days: 7 # Guardar los ejecutables durante 7 días
